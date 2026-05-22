@@ -1,0 +1,308 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CMPS 260: Module 2 Programming Project</title>
+<style>* { font-family: monospace; }</style>
+
+<script>
+
+// NOTE: You must implement the data structures using the prototype approach.
+//       This is not what the book uses, so you have to convert it.
+//       See also: https://it.pointpark.edu/tutorials/no-prototype-vs-prototype/
+
+// NOTE: Please review the following links regularly:
+//       https://it.pointpark.edu/tutorials/arrays-vs-objects/
+//       https://it.pointpark.edu/tutorials/no-prototype-vs-prototype/
+//       https://it.pointpark.edu/tutorials/implementation-vs-interface/
+
+
+
+//---------//
+// Project //
+//---------//
+console.log("Project");
+
+
+
+// 1. Implement the stack data structure using the prototype.
+
+function Stack() {
+
+  this.items = [];
+
+}
+
+// push element to stack
+Stack.prototype.push = function(element) {
+
+  this.items.push(element);
+
+};
+
+// remove top element
+Stack.prototype.pop = function() {
+
+  return this.items.pop();
+
+};
+
+// view top element
+Stack.prototype.peek = function() {
+
+  return this.items[this.items.length - 1];
+
+};
+
+// check if empty
+Stack.prototype.isEmpty = function() {
+
+  return this.items.length === 0;
+
+};
+
+// stack size
+Stack.prototype.size = function() {
+
+  return this.items.length;
+
+};
+
+// print stack
+Stack.prototype.print = function() {
+
+  console.log(this.items.toString());
+
+};
+
+
+// simple stack test
+
+var stack = new Stack();
+
+console.log("Stack empty:", stack.isEmpty());
+
+stack.push(10);
+stack.push(20);
+stack.push(30);
+
+console.log("After push:");
+stack.print();
+
+console.log("Top element:", stack.peek());
+
+console.log("Removed:", stack.pop());
+
+console.log("After pop:");
+stack.print();
+
+
+
+// 2. It is possible to use a stack to check if the number of parentheses in a
+//    string is balanced, meaning there are as many opening parentheses as
+//    closing ones. In addition, we can also make sure that each opening
+//    parenthesis precedes a closing parenthesis. Implement this algorithm.
+//    HINT: When encountering '(' push to the stack and when encountering ')'
+//    pop from the stack.
+
+function isBalanced(str) {
+
+  // create stack
+  var stack = new Stack();
+
+  // loop through string characters
+  for (var i = 0; i < str.length; i++) {
+
+    var char = str[i];
+
+    // if opening parenthesis
+    if (char === "(") {
+
+      stack.push(char);
+
+    }
+
+    // if closing parenthesis
+    else if (char === ")") {
+
+      // if stack empty -> invalid
+      if (stack.isEmpty()) {
+
+        return false;
+
+      }
+
+      // remove matching opening parenthesis
+      stack.pop();
+
+    }
+
+  }
+
+  // if stack empty -> balanced
+  return stack.isEmpty();
+
+}
+
+
+
+// 3. Write a simple test program that shows your implementation in the
+//    previous question works.
+
+
+console.log("(()) ->", isBalanced("(())"));
+
+console.log("(()()) ->", isBalanced("(()())"));
+
+console.log("(() ->", isBalanced("(()"));
+
+console.log("())( ->", isBalanced("())("));
+
+
+
+// 4. Implement the queue data structure using the prototype.
+
+function Queue() {
+
+  this.items = [];
+
+}
+
+// add item to queue
+Queue.prototype.enqueue = function(element) {
+
+  this.items.push(element);
+
+};
+
+// remove item from queue
+Queue.prototype.dequeue = function() {
+
+  return this.items.shift();
+
+};
+
+// front item
+Queue.prototype.front = function() {
+
+  return this.items[0];
+
+};
+
+// check if empty
+Queue.prototype.isEmpty = function() {
+
+  return this.items.length === 0;
+
+};
+
+// queue size
+Queue.prototype.size = function() {
+
+  return this.items.length;
+
+};
+
+// print queue
+Queue.prototype.print = function() {
+
+  for (var i = 0; i < this.items.length; i++) {
+
+    console.log(this.items[i].toString());
+
+  }
+
+};
+
+
+
+// 5. Create a queue that stores edibles, that can be either fruits or
+//    vegetables. Use the constructor below to create the edible and store a
+//    few of each kind in the queue (at least 3 of each).
+
+
+function Edible(name, isFruit) {
+
+  this.name = name;
+
+  this.isFruit = isFruit; // if not fruit, it must be a vegetable
+
+  this.toString = function() {
+
+    return "Edible: " + this.name + " Fruit: " + this.isFruit;
+
+  };
+
+}
+
+
+// edible queue
+var edibleQueue = new Queue();
+
+// fruits
+edibleQueue.enqueue(new Edible("Apple", true));
+edibleQueue.enqueue(new Edible("Banana", true));
+edibleQueue.enqueue(new Edible("Orange", true));
+
+// vegetables
+edibleQueue.enqueue(new Edible("Carrot", false));
+edibleQueue.enqueue(new Edible("Potato", false));
+edibleQueue.enqueue(new Edible("Broccoli", false));
+
+
+
+// 6. Create two more queues: one for fruits and one for vegetables. For this
+//    question, only create them (and leave them empty).
+
+
+var fruitQueue = new Queue();
+
+var vegetableQueue = new Queue();
+
+
+
+// 7. Dequeue all the elements from the edible queue and enqueue them in the
+//    appropriate queue, either for fruits or vegetables.
+
+
+while (!edibleQueue.isEmpty()) {
+
+  var edible = edibleQueue.dequeue();
+
+  if (edible.isFruit) {
+
+    fruitQueue.enqueue(edible);
+
+  }
+
+  else {
+
+    vegetableQueue.enqueue(edible);
+
+  }
+
+}
+
+
+
+// 8. Print the final contents to the console, showing that your code works.
+
+
+console.log("Fruits Queue:");
+
+fruitQueue.print();
+
+console.log("Vegetables Queue:");
+
+vegetableQueue.print();
+
+
+</script>
+</head>
+
+<body>
+
+See console!
+
+</body>
+</html>
