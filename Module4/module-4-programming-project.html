@@ -1,0 +1,244 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CMPS 260: Module 4 Programming Project</title>
+<style>* { font-family: monospace; }</style>
+<script>
+
+// NOTE: You must implement the data structures using the prototype approach.
+//       This is not what the book uses, so you have to convert it.
+//       See also: https://it.pointpark.edu/tutorials/no-prototype-vs-prototype/
+
+// NOTE: Please review the following links regularly:
+//       https://it.pointpark.edu/tutorials/arrays-vs-objects/
+//       https://it.pointpark.edu/tutorials/no-prototype-vs-prototype/
+//       https://it.pointpark.edu/tutorials/implementation-vs-interface/
+
+
+
+//---------//
+// Project //
+//---------//
+console.log("Project");
+
+// 1. Implement the set data structure using the prototype.
+
+function Set() {
+  this.items = {};
+}
+
+Set.prototype.add = function(value) {
+  if (!this.has(value)) {
+    this.items[value] = value;
+    return true;
+  }
+  return false;
+};
+
+Set.prototype.has = function(value) {
+  return this.items.hasOwnProperty(value);
+};
+
+Set.prototype.values = function() {
+  return Object.values(this.items);
+};
+
+Set.prototype.size = function() {
+  return Object.keys(this.items).length;
+};
+
+Set.prototype.union = function(otherSet) {
+  var unionSet = new Set();
+
+  var values = this.values();
+  for (var i = 0; i < values.length; i++) {
+    unionSet.add(values[i]);
+  }
+
+  values = otherSet.values();
+  for (var i = 0; i < values.length; i++) {
+    unionSet.add(values[i]);
+  }
+
+  return unionSet;
+};
+
+Set.prototype.intersection = function(otherSet) {
+  var intersectionSet = new Set();
+
+  var values = this.values();
+
+  for (var i = 0; i < values.length; i++) {
+    if (otherSet.has(values[i])) {
+      intersectionSet.add(values[i]);
+    }
+  }
+
+  return intersectionSet;
+};
+
+Set.prototype.subset = function(otherSet) {
+
+  if (this.size() > otherSet.size()) {
+    return false;
+  }
+
+  var values = this.values();
+
+  for (var i = 0; i < values.length; i++) {
+    if (!otherSet.has(values[i])) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
+// A professor keeps attendence of classes with the following results:
+// All students: Mary, Joe, Tim, Rosalee, Vincent, Caroline
+// Class 1: Rosalee, Joe, Mary, Tim
+// Class 2: Mary, Tim, Vincent, Rosalee, Caroline
+// Class 3: Caroline, Tim, Vincent, Rosalee, Joe
+
+// 2. Create a set of students for each class.
+var allStudents = new Set();
+allStudents.add("Mary");
+allStudents.add("Joe");
+allStudents.add("Tim");
+allStudents.add("Rosalee");
+allStudents.add("Vincent");
+allStudents.add("Caroline");
+
+var class1 = new Set();
+class1.add("Rosalee");
+class1.add("Joe");
+class1.add("Mary");
+class1.add("Tim");
+
+var class2 = new Set();
+class2.add("Mary");
+class2.add("Tim");
+class2.add("Vincent");
+class2.add("Rosalee");
+class2.add("Caroline");
+
+var class3 = new Set();
+class3.add("Caroline");
+class3.add("Tim");
+class3.add("Vincent");
+class3.add("Rosalee");
+class3.add("Joe");
+
+// 3. Use set operations to get a list of students that attended at least
+//    one class.
+var attendedOneClass =
+  class1.union(class2).union(class3);
+
+console.log("Attended at least one class:",
+            attendedOneClass.values());
+
+// 4. Use set operations to get a list of students that attended all classes.
+var attendedAllClasses =
+  class1.intersection(class2)
+        .intersection(class3);
+
+console.log("Attended all classes:",
+            attendedAllClasses.values());
+
+// 5. Show that the results for (2) and (3) are a subset of all students.
+console.log("One class subset of all students:",
+            attendedOneClass.subset(allStudents));
+
+console.log("All classes subset of all students:",
+            attendedAllClasses.subset(allStudents));
+
+// 6. Implement the dictionary data structure using the prototype.
+
+function Dictionary() {
+  this.items = {};
+}
+
+Dictionary.prototype.set = function(key, value) {
+  this.items[key] = value;
+};
+
+Dictionary.prototype.get = function(key) {
+  return this.items[key];
+};
+
+Dictionary.prototype.has = function(key) {
+  return this.items.hasOwnProperty(key);
+};
+
+Dictionary.prototype.keys = function() {
+  return Object.keys(this.items);
+};
+
+Dictionary.prototype.print = function() {
+  console.log(this.items);
+};
+
+// 7. Complete the method below that adds all key-value pairs from one
+//    dictionary into another. See also the example below.
+
+Dictionary.prototype.merge = function(dict) {
+  // add all key-value pairs in 'dict' to 'this'
+    var keys = dict.keys();
+    for (var i = 0; i < keys.length; i++) {
+      this.set(keys[i], dict.get(keys[i]));
+    }
+};
+
+// Test your code by uncommenting these lines:
+var dict1 = new Dictionary();
+dict1.set("key1", "val1");
+dict1.set("key2", "val2");
+dict1.set("key3", "val3");
+
+var dict2 = new Dictionary();
+dict2.set("key3", "val3b");
+dict2.set("key4", "val4");
+
+dict1.merge(dict2);
+
+console.log("Merged Dictionary:");
+dict1.print(); // should contain key1-val1, key2-val2, key3-val3b, key4-val4
+
+// 8. Implement the hashtable data structure using the prototype.
+function HashTable() {
+  this.table = [];
+}
+
+HashTable.prototype.put = function(key, value) {
+  this.table[key] = value;
+};
+
+HashTable.prototype.get = function(key) {
+  return this.table[key];
+};
+
+HashTable.prototype.remove = function(key) {
+  delete this.table[key];
+};
+
+// Test HashTable
+
+var hash = new HashTable();
+
+hash.put("Mary", "Present");
+hash.put("Joe", "Present");
+
+console.log("Hash Mary:",
+            hash.get("Mary"));
+
+console.log("Hash Joe:",
+            hash.get("Joe"));
+
+
+</script>
+</head>
+<body>
+  See console!
+</body>
+</html>
