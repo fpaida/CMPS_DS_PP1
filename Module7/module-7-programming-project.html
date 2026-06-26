@@ -1,0 +1,194 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CMPS 260: Module 7 Programming Project</title>
+<style>* { font-family: monospace; }</style>
+<script>
+
+// NOTE: You must implement the data structures using the prototype approach.
+//       This is not what the book uses, so you have to convert it.
+//       See also: https://it.pointpark.edu/tutorials/no-prototype-vs-prototype/
+
+// NOTE: Please review the following links regularly:
+//       https://it.pointpark.edu/tutorials/arrays-vs-objects/
+//       https://it.pointpark.edu/tutorials/no-prototype-vs-prototype/
+//       https://it.pointpark.edu/tutorials/implementation-vs-interface/
+
+
+
+//---------//
+// Project //
+//---------//
+console.log("Project");
+
+// 1. Implement factorial using a recursive function and test your code.
+
+function factorial(n) {
+    if (n === 0 || n === 1) {
+        return 1;
+    }
+
+    return n * factorial(n - 1);
+}
+
+console.log("Factorial:");
+
+for (var i = 0; i <= 10; i++) {
+    console.log(i + "! =", factorial(i));
+}
+
+// 2. Implement a function that returns the complete fibonacci sequence in an
+//    array for a given number.
+
+function fibonacciSequence(n) {
+
+    var sequence = [];
+
+    if (n >= 0) sequence.push(0);
+    if (n >= 1) sequence.push(1);
+
+    for (var i = 2; i <= n; i++) {
+        sequence.push(sequence[i - 1] + sequence[i - 2]);
+    }
+
+    return sequence;
+}
+
+console.log("Fibonacci Sequence:");
+console.log(fibonacciSequence(10));
+
+// 3. Implement finding the longest common subsequence using dynamic
+//    programming. Test your code.
+
+function longestCommonSubsequence(word1, word2) {
+
+    var rows = word1.length + 1;
+    var cols = word2.length + 1;
+
+    var dp = [];
+
+    for (var i = 0; i < rows; i++) {
+        dp[i] = [];
+        for (var j = 0; j < cols; j++) {
+            dp[i][j] = 0;
+        }
+    }
+
+    for (var i = 1; i < rows; i++) {
+        for (var j = 1; j < cols; j++) {
+
+            if (word1[i - 1] === word2[j - 1]) {
+                dp[i][j] = dp[i - 1][j - 1] + 1;
+            } else {
+                dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+            }
+
+        }
+    }
+
+    return dp[word1.length][word2.length];
+}
+
+console.log("Longest Common Subsequence:");
+
+console.log(
+    "between 'algorithm' and 'logarithm' =",
+    longestCommonSubsequence("algorithm", "logarithm")
+);
+
+console.log(
+    "between 'computer' and 'house' =",
+    longestCommonSubsequence("computer", "house")
+);
+
+// 4. Solve the problem of summing all the numbers in an array using
+//    imperative style.
+
+var numbers = [5, 10, 15, 20, 25];
+
+function imperativeSum(array) {
+
+    var sum = 0;
+
+    for (var i = 0; i < array.length; i++) {
+        sum += array[i];
+    }
+
+    return sum;
+}
+
+console.log("Imperative Sum:");
+console.log(imperativeSum(numbers));
+
+// 5. Solve the problem of summing all the numbers in an array using
+//    functional style.
+
+function functionalSum(array) {
+
+    return array.reduce(function(total, value) {
+        return total + value;
+    }, 0);
+
+}
+
+console.log("Functional Sum:");
+console.log(functionalSum(numbers));
+
+// 6. Solve problem 14 of Project Euler: https://projecteuler.net/problem=14
+//    Note: This may be a bit challenging. Try to get as far as you can.
+//          Instead of one million you could use a smaller number for testing.
+
+function collatzLength(n) {
+
+    var length = 1;
+
+    while (n !== 1) {
+
+        if (n % 2 === 0) {
+            n = n / 2;
+        } else {
+            n = 3 * n + 1;
+        }
+
+        length++;
+    }
+
+    return length;
+}
+
+function longestCollatz(limit) {
+
+    var longest = 0;
+    var startingNumber = 1;
+
+    for (var i = 1; i < limit; i++) {
+
+        var current = collatzLength(i);
+
+        if (current > longest) {
+            longest = current;
+            startingNumber = i;
+        }
+
+    }
+
+    return {
+        number: startingNumber,
+        length: longest
+    };
+}
+
+console.log("Project Euler Problem 14:");
+
+var result = longestCollatz(100000);
+
+console.log("Longest chain starts at:", result.number);
+console.log("Chain length:", result.length);
+
+</script>
+</head>
+<body>
+  See console!
+</body>
+</html>
