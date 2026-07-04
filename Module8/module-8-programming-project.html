@@ -1,0 +1,286 @@
+html
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CMPS 260: Module 8 Programming Project</title>
+<style>* { font-family: monospace; }</style>
+<script>
+
+// NOTE: You must implement the data structures using the prototype approach.
+//       This is not what the book uses, so you have to convert it.
+//       See also: https://it.pointpark.edu/tutorials/no-prototype-vs-prototype/
+
+// NOTE: Please review the following links regularly:
+//       https://it.pointpark.edu/tutorials/arrays-vs-objects/
+//       https://it.pointpark.edu/tutorials/no-prototype-vs-prototype/
+//       https://it.pointpark.edu/tutorials/implementation-vs-interface/
+
+
+
+//---------//
+// Project //
+//---------//
+console.log("Project");
+
+// 1. What is the worst case complexity of the following function?
+
+// ANSWER:
+//
+// Worst-case time complexity: O(n²)
+//
+// The function uses two nested loops. In the worst case, when there are
+// no duplicate elements, every element is compared with every other
+// element before returning false. Therefore, the running time is
+// proportional to n × n, which is O(n²).
+
+function hasDuplicates(arr) {
+  for (var i = 0; i < arr.length; i++) {
+    for (var j = 0; j < arr.length; j++) {
+      if (i !== j && arr[i] === arr[j]) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+// Test
+console.log("Question 1");
+console.log(hasDuplicates([1, 2, 3, 4]));     // false
+console.log(hasDuplicates([1, 2, 3, 2]));     // true
+console.log("");
+
+
+// 2. Implement a faster version of the same function and analyze the
+//    complexity of this approach.
+
+// ANSWER:
+// This faster version uses an object as a hash table.
+// As the function loops through the array, each value is stored inside
+// the object. If the same value is found again, the function immediately
+// returns true.
+//
+// Time complexity: O(n)
+// The function only needs one loop through the array.
+//
+// Space complexity: O(n)
+// In the worst case, the object stores every element from the array.
+
+function hasDuplicatesFast(arr) {
+
+  var values = {};
+
+  for (var i = 0; i < arr.length; i++) {
+
+    if (values[arr[i]]) {
+      return true;
+    }
+
+    values[arr[i]] = true;
+  }
+
+  return false;
+}
+
+// Test
+console.log("Question 2");
+console.log(hasDuplicatesFast([1, 2, 3, 4])); // false
+console.log(hasDuplicatesFast([1, 2, 3, 2])); // true
+console.log("");
+
+// 3. The travelling salesman problem is a another classic problem and we are
+//    going to solve it using a greedy algorithm. Before starting, please read
+//    through the article on Wikipedia:
+//      https://en.wikipedia.org/wiki/Travelling_salesman_problem
+//    Then implement the following:
+//    (a) Create a graph that represents the example symmetric TSP problem on
+//        the Wikipedia page.
+//    (b) Implement a greedy search that finds the shortest path. You should
+//        have the following steps: (1) pick node A as the starting position,
+//        (2) pick the closest neighbor that has not been visited as the next
+//        city to visit, (3) continue this process until returning to A,
+//        (4) print the final length of the path and also the sequence of
+//        the cities.
+//    (c) Check your results, do they make sense? Is is the optimal solution?
+
+// ANSWER:
+//
+// I created a weighted graph using the prototype approach to represent
+// the cities and the distances between them.
+//
+// The greedy algorithm starts at city A. At each step, it selects the
+// closest unvisited city until every city has been visited. Finally,
+// it returns to the starting city.
+//
+// The results make sense because the algorithm always chooses the
+// nearest available city. However, the greedy approach does not always
+// produce the optimal solution for the Travelling Salesman Problem.
+// It provides a good approximation, but another route may have a
+// shorter total distance.
+
+function Graph() {
+  this.vertices = [];
+  this.edges = {};
+}
+
+Graph.prototype.addVertex = function(vertex) {
+  this.vertices.push(vertex);
+  this.edges[vertex] = {};
+};
+
+Graph.prototype.addEdge = function(vertex1, vertex2, weight) {
+  this.edges[vertex1][vertex2] = weight;
+  this.edges[vertex2][vertex1] = weight;
+};
+
+Graph.prototype.greedyTSP = function(start) {
+
+  var visited = {};
+  var path = [];
+  var current = start;
+  var totalDistance = 0;
+
+  visited[current] = true;
+  path.push(current);
+
+  while (path.length < this.vertices.length) {
+
+    var neighbors = this.edges[current];
+    var closestCity = null;
+    var closestDistance = Infinity;
+
+    for (var city in neighbors) {
+
+      if (!visited[city] && neighbors[city] < closestDistance) {
+        closestCity = city;
+        closestDistance = neighbors[city];
+      }
+
+    }
+
+    visited[closestCity] = true;
+    path.push(closestCity);
+    totalDistance += closestDistance;
+    current = closestCity;
+
+  }
+
+  totalDistance += this.edges[current][start];
+  path.push(start);
+
+  return {
+    path: path,
+    distance: totalDistance
+  };
+
+};
+
+// Create graph
+var graph = new Graph();
+
+graph.addVertex("A");
+graph.addVertex("B");
+graph.addVertex("C");
+graph.addVertex("D");
+
+graph.addEdge("A", "B", 20);
+graph.addEdge("A", "C", 42);
+graph.addEdge("A", "D", 35);
+graph.addEdge("B", "C", 30);
+graph.addEdge("B", "D", 34);
+graph.addEdge("C", "D", 12);
+
+// Run Greedy TSP
+var tspResult = graph.greedyTSP("A");
+
+// Test
+console.log("");
+console.log("Question 3");
+console.log("Greedy TSP Path:");
+console.log(tspResult.path.join(" -> "));
+console.log("Total Distance: " + tspResult.distance);
+console.log("Does the result make sense? Yes.");
+console.log("Is it the optimal solution? No. A greedy algorithm does not always produce the shortest possible tour.");
+console.log("");
+
+
+// 4. Solve https://csacademy.com/contest/interview-archive/task/intersecting-rectangles/
+//    What is the runtime complexity of your solution?
+//    HINT: Try to break down the problems into smaller steps. For example,
+//          find a convenient way to represent rectangles and define a function
+//          that tests whether one rectangle is inside another. Then test your
+//          code on just two rectangles first to make sure it works.
+
+// ANSWER:
+//
+// I represented each rectangle by its bottom-left corner (x1, y1)
+// and top-right corner (x2, y2).
+//
+// Two rectangles do not intersect if one rectangle is completely
+// to the left, right, above, or below the other rectangle.
+// Otherwise, the rectangles intersect.
+//
+// Runtime Complexity: O(1)
+//
+// The algorithm performs a fixed number of comparisons regardless of
+// the size of the coordinates, so the running time is constant.
+
+function Rectangle(x1, y1, x2, y2) {
+  this.x1 = x1;
+  this.y1 = y1;
+  this.x2 = x2;
+  this.y2 = y2;
+}
+
+Rectangle.prototype.intersects = function(other) {
+
+  if (this.x2 < other.x1 || other.x2 < this.x1) {
+    return false;
+  }
+
+  if (this.y2 < other.y1 || other.y2 < this.y1) {
+    return false;
+  }
+
+  return true;
+};
+
+// Test Rectangles
+var rectangle1 = new Rectangle(0, 0, 4, 4);
+var rectangle2 = new Rectangle(2, 2, 6, 6);
+var rectangle3 = new Rectangle(5, 5, 8, 8);
+
+console.log("");
+console.log("Question 4");
+
+console.log("Rectangle 1:");
+console.log("(0,0) to (4,4)");
+
+console.log("Rectangle 2:");
+console.log("(2,2) to (6,6)");
+
+console.log("Rectangle 3:");
+console.log("(5,5) to (8,8)");
+
+console.log("");
+
+console.log("Rectangle 1 intersects Rectangle 2:");
+console.log(rectangle1.intersects(rectangle2));
+
+console.log("");
+
+console.log("Rectangle 1 intersects Rectangle 3:");
+console.log(rectangle1.intersects(rectangle3));
+
+console.log("");
+
+console.log("Runtime Complexity: O(1)");
+
+
+</script>
+</head>
+<body>
+  See console!
+</body>
+</html>
